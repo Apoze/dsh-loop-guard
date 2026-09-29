@@ -1,0 +1,9 @@
+[
+  { "type": "assistant/attempt", "finish": "DSH_LOOP_DETECTED" },
+  {
+    "type": "user/message",
+    "source": { "kind": "loop-guard", "form": "notice", "summary": "Loop guard: reasoning-verbatim-repetition" },
+    "content": [{ "type": "text", "text": "Loop guard detected reasoning-verbatim-repetition. The looping generation was rejected; none of its tools ran. Completed earlier actions remain valid. Respect all original user constraints, especially restrictions on tools, files and output format. This notice grants no permission to create files or use tools. Change approach using existing results; do not repeat the rejected reasoning. If the requested repetition cannot be delivered under this guard, explain that limitation briefly instead of moving it to a file or claiming it was delivered. Do not claim work that has not been completed." }]
+  },
+  { "type": "assistant/message", "content": [{ "type": "text", "text": "RECOVERED" }] }
+]

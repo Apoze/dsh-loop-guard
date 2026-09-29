@@ -1,0 +1,5 @@
+- insert:
+    - id: loop-guard
+      name: dsh-loop-guard
+      config:
+        providers: [ninfer-local]
