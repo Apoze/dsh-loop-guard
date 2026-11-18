@@ -67,7 +67,7 @@ export function apply(ctx: Context, config: Config): void {
   }
   function fail(agent: Agent, reason: string): never {
     agent.session.append('user/message', notice(reason, true), { surfaceOp: 'append' })
-    throw new LlmError('Loop guard: automatic recovery exhausted; new user input required', 'DSH_LOOP_EXHAUSTED')
+    throw LlmError.fromFailure({ message: 'Loop guard: automatic recovery exhausted; new user input required', code: 'DSH_LOOP_EXHAUSTED' })
   }
 
   ctx.on('agent/pre-step', ({ agent, messages }, next) => {

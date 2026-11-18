@@ -93,14 +93,21 @@ export class TextDetector {
     const min = this.kind === 'reasoning' ? this.settings.thinkingMinChars : this.settings.outputMinChars
     const repeats = this.settings.textRepeats
     // Reverse Z-array finds adjacent equal suffixes in linear window time.
-    const reversed = Array.from(s).reverse().join('')
-    const z = new Uint32Array(reversed.length)
+    const maxPeriod = Math.floor(s.length / repeats)
+    if (maxPeriod < min) return
+    // Compare from the end directly. Preserve the original code-point reversal
+    // for supplementary characters, which occupy two UTF-16 units.
+    const reversed = /[\uD800-\uDBFF][\uDC00-\uDFFF]/.test(s) ? Array.from(s).reverse().join('') : undefined
+    const codeAt = reversed === undefined
+      ? (i: number) => s.charCodeAt(s.length - 1 - i)
+      : (i: number) => reversed.charCodeAt(i)
+    const z = new Uint32Array(maxPeriod + 1)
     let left = 0, right = 0
-    for (let i = 1; i < reversed.length; i++) {
+    for (let i = 1; i <= maxPeriod; i++) {
       if (i <= right) z[i] = Math.min(right - i + 1, z[i - left])
-      while (i + z[i] < reversed.length && reversed[z[i]] === reversed[i + z[i]]) z[i]++
+      while (i + z[i] < s.length && codeAt(z[i]) === codeAt(i + z[i])) z[i]++
       if (i + z[i] - 1 > right) { left = i; right = i + z[i] - 1 }
-      if (i >= min && i * repeats <= reversed.length && z[i] >= i * (repeats - 1)) {
+      if (i >= min && z[i] >= i * (repeats - 1)) {
         this.hit = `${this.kind}-verbatim-repetition`
         return
       }

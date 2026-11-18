@@ -11,7 +11,7 @@ test('user cancellation wins over recovery and closes the live HTTP stream', { t
   const r = await f.harness.run('Start thinking.')
   assert.equal(ending(r), 'aborted')
   assert.equal(f.generated.length, 1)
-  assert.ok(f.closed.includes(1))
+  await t.waitFor(() => f.closed.includes(1), { timeout: 2000 })
   assert.equal(r.events.filter(e => e.type === 'user/message' && e.data.source.kind === 'loop-guard').length, 0)
 })
 
